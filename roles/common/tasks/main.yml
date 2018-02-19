@@ -1,0 +1,11 @@
+- name: upgrade all packages
+  yum: name=* state=latest
+
+- name: requirements packages
+  yum:
+    name:
+      - xfsdump
+      - xfsprogs-devel
+
+- name: install pip dependencies
+  pip: name=passlib

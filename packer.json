@@ -1,0 +1,44 @@
+{
+  "builders": [{
+    "type": "amazon-ebs",
+    "region": "eu-west-1",
+    "subnet_id": "subnet-47e3a923",
+    "source_ami": "ami-d834aba1",
+    "instance_type": "t2.micro",
+    "ssh_username": "ec2-user",
+    "ami_name": "packer - {{timestamp}}",
+    "launch_block_device_mappings": [
+      {
+        "device_name": "/dev/xvda",
+        "volume_size": 20,
+        "volume_type": "gp2",
+        "delete_on_termination": true
+      },
+      {
+        "device_name": "/dev/sdf",
+        "volume_size": 100,
+        "volume_type": "gp2",
+        "delete_on_termination": true
+      }
+    ],
+    "ami_block_device_mappings": [
+      {
+        "device_name": "/dev/xvda",
+        "volume_size": 20,
+        "volume_type": "gp2",
+        "delete_on_termination": true
+      },
+      {
+        "device_name": "/dev/sdf",
+        "volume_size": 100,
+        "volume_type": "gp2",
+        "delete_on_termination": true
+      }
+    ]
+  }],
+
+  "provisioners": [{
+    "type": "ansible",
+    "playbook_file": "./playbook.yml"
+  }]
+}

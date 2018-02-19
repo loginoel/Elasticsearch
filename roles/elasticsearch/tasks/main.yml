@@ -1,0 +1,108 @@
+- name: install elasticsearch dependencies
+  yum:
+    name: java-1.8.0
+    state: latest
+
+- name: remove old dependencies
+  yum:
+    name: java-1.7.0-openjdk
+    state: absent
+
+- name: mount volume elasticsearch
+  mount:
+    path: /var/lib/elasticsearch
+    src: /dev/xvdf
+    fstype: xfs
+    state: present
+
+- name: import gpg key
+  rpm_key:
+    state: present
+    key: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+
+- name: copy elasticsearch repo
+  copy:
+    src: "{{ role_path }}/tasks/elasticsearch.repo"
+    dest: /etc/yum.repos.d/elasticsearch.repo
+    owner: root
+    group: root
+    mode: 0644
+
+- name: copy kibana repo
+  copy:
+    src: "{{ role_path }}/tasks/kibana.repo"
+    dest: /etc/yum.repos.d/kibana.repo
+    owner: root
+    group: root
+    mode: 0644
+
+- name: install elasticsearch and kibana
+  yum:
+    name:
+      - elasticsearch
+      - kibana
+      - nginx
+      - httpd-tools
+
+- name: set permissions volume for elasticsearch
+  file:
+    path: /var/lib/elasticsearch
+    state: directory
+    owner: elasticsearch
+    group: elasticsearch
+    mode: 0755
+
+- name: create vhosts directory
+  file:
+    path: /etc/nginx/vhosts.d
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: copy elasticsearch config
+  copy:
+    src: "{{ role_path }}/tasks/elasticsearch.yml"
+    dest: /etc/elasticsearch/elasticsearch.yml
+    owner: root
+    group: root
+    mode: 0644
+
+- name: copy kibana config
+  copy:
+    src: "{{ role_path }}/tasks/kibana.yml"
+    dest: /etc/kibana/kibana.yml
+    owner: root
+    group: root
+    mode: 0644
+
+- name: copy nginx config
+  copy:
+    src: "{{ role_path }}/tasks/nginx.conf"
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: copy vhost elasticsearch
+  copy:
+    src: "{{ role_path }}/tasks/virtualhost.conf"
+    dest: /etc/nginx/vhosts.d/virtualhost.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: chkconfig nginx
+  service:
+    name: nginx
+    enabled: yes
+
+- name: chkconfig elasticsearch
+  service:
+    name: elasticsearch
+    enabled: yes
+
+- name: chkconfig kibana
+  service:
+    name: kibana
+    enabled: yes
