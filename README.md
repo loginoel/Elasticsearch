@@ -26,11 +26,11 @@ make run DOMAIN=loginoel.com
 Kibana:
 
 ```bash
-kibana.loginoel.com
+http://kibana.loginoel.com
 ```
 
 Elasticsearch:
 
 ```bash
-elasticsearch.loginoel.com
+http://elasticsearch.loginoel.com
 ```
